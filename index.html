@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eDEX-UI // Symmetric Cryptographic Console</title>
+    <!-- Google Fonts for authentic terminal look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+    <!-- FontAwesome for futuristic icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom styling -->
+    <link rel="stylesheet" href="style.css">
+    <!-- CryptoJS Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</head>
+<body>
+    <!-- CRT Effect Scanlines & Overlay -->
+    <div class="crt-overlay"></div>
+    <div class="crt-curvature"></div>
+    <div class="vignette"></div>
+
+    <!-- Main Container -->
+    <div class="app-container">
+        <!-- TOP HEADER -->
+        <header class="cyber-header">
+            <div class="header-left">
+                <span class="status-indicator online"></span>
+                <span class="terminal-tag">SYS.STATUS: ONLINE</span>
+                <span class="divider">|</span>
+                <span class="terminal-tag secondary">CRYPTO.CORE: AES-256</span>
+            </div>
+            
+            <div class="header-center">
+                <div class="branding-wrapper">
+                    <span class="brackets">::</span>
+                    <h1 class="branding-text">LUCID PROTOCOL</h1>
+                    <span class="brackets">::</span>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <span class="terminal-tag secondary" id="ping-text">PING: -- ms</span>
+                <span class="divider">|</span>
+                <div class="clock-widget">
+                    <span id="header-date">2026-05-31</span>
+                    <span class="clock-time" id="header-clock">16:41:00</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- DASHBOARD GRID -->
+        <main class="dashboard-grid">
+            
+            <!-- LEFT PANEL: FILE SYSTEM & CODES -->
+            <section class="grid-panel sidebar-left" aria-label="System Directory & Processes">
+                <div class="panel-header">
+                    <i class="fa-solid fa-folder-tree panel-icon"></i>
+                    <h2>DIR_TREE // CRYPTO_ROOT</h2>
+                    <span class="panel-status">SYS_V.1.0.4</span>
+                </div>
+                <div class="panel-content">
+                    <!-- Fake directory tree -->
+                    <div class="directory-tree" id="directory-tree">
+                        <div class="tree-item root open">
+                            <span class="tree-toggle"><i class="fa-solid fa-chevron-down"></i></span>
+                            <i class="fa-solid fa-folder-open folder-icon"></i>
+                            <span class="tree-label">root</span>
+                        </div>
+                        <div class="tree-children">
+                            <div class="tree-item folder open">
+                                <span class="tree-toggle"><i class="fa-solid fa-chevron-down"></i></span>
+                                <i class="fa-solid fa-folder-open folder-icon"></i>
+                                <span class="tree-label">algorithms</span>
+                            </div>
+                            <div class="tree-children">
+                                <div class="tree-item file clickable" data-file="aes.txt">
+                                    <i class="fa-regular fa-file-code file-icon"></i>
+                                    <span class="tree-label">aes_256_cbc.sys</span>
+                                </div>
+                                <div class="tree-item file clickable" data-file="salt.txt">
+                                    <i class="fa-regular fa-file-code file-icon"></i>
+                                    <span class="tree-label">pbkdf2_sha256.sys</span>
+                                </div>
+                            </div>
+                            
+                            <div class="tree-item folder">
+                                <span class="tree-toggle"><i class="fa-solid fa-chevron-right"></i></span>
+                                <i class="fa-solid fa-folder folder-icon"></i>
+                                <span class="tree-label">vault</span>
+                            </div>
+                            <div class="tree-children hidden">
+                                <div class="tree-item file clickable" data-file="classified.txt">
+                                    <i class="fa-regular fa-file-lines file-icon"></i>
+                                    <span class="tree-label">classified_intel.enc</span>
+                                </div>
+                                <div class="tree-item file clickable" data-file="credentials.txt">
+                                    <i class="fa-regular fa-file-lines file-icon"></i>
+                                    <span class="tree-label">node_access.enc</span>
+                                </div>
+                            </div>
+
+                            <div class="tree-item file clickable" data-file="readme.txt">
+                                <i class="fa-regular fa-file-lines file-icon"></i>
+                                <span class="tree-label">README.md</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Process List -->
+                    <div class="process-monitor">
+                        <div class="sub-panel-title">ACTIVE_PROCESS_REGISTRY</div>
+                        <div class="process-list" id="process-list">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CENTER MAIN CONSOLE -->
+            <section class="grid-panel main-console" aria-label="Cryptographic Interface">
+                <!-- Glitch bar / progress meter -->
+                <div class="console-progress-track">
+                    <div class="console-progress-fill" id="console-progress-fill"></div>
+                </div>
+
+                <div class="panel-header console-header">
+                    <div class="console-title-group">
+                        <i class="fa-solid fa-terminal panel-icon pulse"></i>
+                        <h2>CRYPTOGRAPHIC_CORE_INTERFACE</h2>
+                    </div>
+                    <div class="mode-tabs">
+                        <button class="mode-tab active" id="tab-encrypt" data-mode="encrypt">
+                            <span class="tab-indicator">&gt;</span> ENCRYPT
+                        </button>
+                        <button class="mode-tab" id="tab-decrypt" data-mode="decrypt">
+                            <span class="tab-indicator">&gt;</span> DECRYPT
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel-content console-content">
+                    <form id="crypto-form" onsubmit="return false;">
+                        <!-- Input Message Section -->
+                        <div class="terminal-input-group">
+                            <label for="input-message" class="input-label" id="input-message-label">
+                                <span class="label-accent">&gt;&gt;</span> ENTER PLAINTEXT TO ENCRYPT:
+                            </label>
+                            <div class="textarea-wrapper">
+                                <textarea id="input-message" class="cyber-textarea" placeholder="Type secret payload message here..." required></textarea>
+                                <div class="textarea-corner top-left"></div>
+                                <div class="textarea-corner top-right"></div>
+                                <div class="textarea-corner bottom-left"></div>
+                                <div class="textarea-corner bottom-right"></div>
+                            </div>
+                        </div>
+
+                        <!-- Secret Key / Password Section -->
+                        <div class="terminal-row-inputs">
+                            <div class="terminal-input-group flex-1">
+                                <label for="secret-key" class="input-label">
+                                    <span class="label-accent">&gt;&gt;</span> PASSKEY / SECRET_HASH:
+                                </label>
+                                <div class="input-wrapper">
+                                    <input type="password" id="secret-key" class="cyber-input" placeholder="Min. 8 char secret key..." required autocomplete="off">
+                                    <button type="button" class="btn-toggle-visibility" id="toggle-key-visibility" title="Toggle visibility">
+                                        <i class="fa-solid fa-eye-slash"></i>
+                                    </button>
+                                    <div class="input-glow-line"></div>
+                                </div>
+                            </div>
+
+                            <div class="terminal-input-group flex-compact">
+                                <label class="input-label">
+                                    <span class="label-accent">&gt;&gt;</span> OP_MODE:
+                                </label>
+                                <div class="mode-badge" id="mode-display">
+                                    AES-256-CBC
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Big Dynamic Glowing Button -->
+                        <div class="action-btn-container">
+                            <button type="submit" class="cyber-btn" id="action-btn">
+                                <span class="btn-glitch-overlay"></span>
+                                <span class="btn-content">
+                                    <i class="fa-solid fa-lock" id="action-icon"></i>
+                                    <span id="action-text">EXECUTE SECURE ENCRYPTION</span>
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Output Console Section -->
+                    <div class="terminal-output-group">
+                        <div class="output-header">
+                            <label class="input-label">
+                                <span class="label-accent">&gt;&gt;</span> OUTPUT_PAYLOAD:
+                            </label>
+                            <button type="button" class="btn-action-small" id="btn-copy-output" disabled>
+                                <i class="fa-solid fa-copy"></i> COPY_TO_CLIPBOARD
+                            </button>
+                        </div>
+                        <div class="textarea-wrapper output-wrapper">
+                            <div class="cyber-output-container" id="output-container">
+                                <div class="scramble-placeholder" id="output-text">
+                                    Awaiting encryption execution...
+                                </div>
+                                <span class="blinking-block-cursor" id="output-cursor">█</span>
+                            </div>
+                            <div class="textarea-corner top-left"></div>
+                            <div class="textarea-corner top-right"></div>
+                            <div class="textarea-corner bottom-left"></div>
+                            <div class="textarea-corner bottom-right"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT PANEL: METRICS & CONSOLE LOGS -->
+            <section class="grid-panel sidebar-right" aria-label="System Metrics & Logs">
+                <div class="panel-header">
+                    <i class="fa-solid fa-gauge-high panel-icon"></i>
+                    <h2>METRICS // REAL_TIME_STATUS</h2>
+                    <span class="panel-status">LOG_FEED: ENGAGED</span>
+                </div>
+                <div class="panel-content flex-column">
+                    <!-- System Metrics Graphics -->
+                    <div class="metrics-container">
+                        <!-- Network latency custom dynamic mini graph -->
+                        <div class="metric-box">
+                            <div class="metric-title-bar">
+                                <span>NET_LATENCY_SPECTRUM</span>
+                                <span id="ping-val" class="glow-text">42 ms</span>
+                            </div>
+                            <div class="graph-wrapper">
+                                <svg class="ping-wave" viewBox="0 0 200 40" preserveAspectRatio="none">
+                                    <path d="M 0 20 Q 20 20 40 20 T 80 20 T 120 20 T 160 20 T 200 20" fill="none" stroke="var(--neon-cyan)" stroke-width="1.5" id="ping-path"></path>
+                                    <path d="M 0 20 Q 20 20 40 20 T 80 20 T 120 20 T 160 20 T 200 20 L 200 40 L 0 40 Z" fill="url(#grad-cyan)" opacity="0.1" id="ping-path-fill"></path>
+                                    <defs>
+                                        <linearGradient id="grad-cyan" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="var(--neon-cyan)" />
+                                            <stop offset="100%" stop-color="transparent" />
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Progress radial indicators or CPU meters -->
+                        <div class="metric-row">
+                            <div class="metric-sub-box">
+                                <div class="metric-title-bar">
+                                    <span>CPU_CORE_TEMP</span>
+                                    <span id="cpu-temp">48°C</span>
+                                </div>
+                                <div class="bar-meter-container">
+                                    <div class="bar-meter-fill" id="cpu-bar" style="width: 48%"></div>
+                                </div>
+                            </div>
+                            <div class="metric-sub-box">
+                                <div class="metric-title-bar">
+                                    <span>MEM_ALLOCATION</span>
+                                    <span id="mem-usage">62%</span>
+                                </div>
+                                <div class="bar-meter-container">
+                                    <div class="bar-meter-fill" id="mem-bar" style="width: 62%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ambient Logs -->
+                    <div class="ambient-logs-panel">
+                        <div class="sub-panel-title">CONSOLE_STREAM_LOGGER</div>
+                        <div class="log-stream-container" id="log-stream">
+                            <!-- Populated with dynamic logs -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- SOUND/MUTED CONTROLLER & FOOTER -->
+        <footer class="cyber-footer">
+            <div class="footer-left">
+                <span class="terminal-tag"><i class="fa-solid fa-microchip"></i> CRYPTOENGINE_SECURE</span>
+                <span class="divider">|</span>
+                <span class="terminal-tag secondary" id="key-strength-badge">KEY_STRENGTH: EMPTY</span>
+            </div>
+            
+            <div class="footer-center">
+                <span>SECURE AES PROTOCOL (CIPHER BLOCK CHAINING) // 256-BIT SYMMETRIC ENCRYPTOR</span>
+            </div>
+
+            <div class="footer-right">
+                <button type="button" class="footer-sound-btn" id="sound-btn" title="Toggle Terminal Sound Effects">
+                    <i class="fa-solid fa-volume-high" id="sound-icon"></i> AUDIO: ENGAGED
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Script File -->
+    <script src="app.js"></script>
+</body>
+</html>
